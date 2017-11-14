@@ -1,9 +1,16 @@
 import axios from 'axios';
 
-export default function loadItemsSuccess (items) {
+export function loadItemsSuccess (items) {
     return {
         type : 'LOAD_ITEM_SUCCESS',
         items
+    }
+}
+
+export function selectedItemSuccess (selectedItem) {
+    return {
+        type : 'SELECTED_ITEM_SUCCESS',
+        selectedItem
     }
 }
 

@@ -8,7 +8,6 @@ import { Provider } from 'react-redux';
 import {loadItems} from './actions/itemActions';
 
 const store  = configureStore();
-debugger;
 store.dispatch(loadItems());
 
 console.log(store.getState());
