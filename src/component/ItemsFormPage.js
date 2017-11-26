@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import '../../styles/home.scss';
 import {selectedItemSuccess} from '../actions/itemActions';
-import {Link} from 'react-router';
+import {Link, browserHistory} from 'react-router';
 import {getCountPerItem} from '../utils/itemsUtil';
 import {lastIndexOf, findIndex} from 'lodash';
 import {getNumberOfProductSelectedByCount, getItemPrice} from '../utils/itemsUtil';
@@ -29,13 +29,18 @@ class ItemsFormPage extends React.Component {
 
     constructor(props) {
         super(props);
-        //this.getItemPrice = this.getItemPrice.bind(this);
         this.getItemDiscount = this.getItemDiscount.bind(this);
         this.selectItemForCart = this.selectItemForCart.bind(this);
+        this.goToCartPage = this.goToCartPage.bind(this);
+        this.getProductDetails = this.getProductDetails.bind(this);
+    }
+
+    goToCartPage() {
+        browserHistory.push('/checkout');
     }
 
     getItemDiscount(discount) {
-        return `${discount + 15}%`;
+        return `${discount + 15}% off`;
     }
 
     selectItemForCart(itemSelected) {
@@ -61,34 +66,44 @@ class ItemsFormPage extends React.Component {
         this.props.selectedItemSuccess(selectedItemList);
     }
 
-    render() {
-        const box = {
-            "width": "235px",
-            "border": "1px solid gray",
-            "padding-top": "20px",
-            "margin-right": "20px",
-            "height": "250px",
-            "padding": "1.5rem",
-            "border-top": "1px solid #dcdcdc"
-        };
-        const strikeText = {"text-decoration": "line-through"};
-        return (
-            <div>
-                <div>
-                    <h3 className="">Items</h3>
-                    <Link to="checkout" className="btn_primary grid_col-2">Go to Cart &nbsp;
-                        { this.props.getCartCount === 0 ? null : (this.props.getCartCount) }</Link>
-                </div>
-                <hr/>
-                {this.props.itemsList.length  && this.props.itemsList.map((item) => {
-                    return <div style={box} key={item.id}>
-                        <div>{ item.type === 'fiction' ? this.getItemDiscount(item.discount) : null }</div>
-                        <div >{ item.name }</div>
-                        <div style={strikeText}>{ item.type === 'fiction' ? `$${item.price}` : null }</div>
-                        <div>{ '$' + getItemPrice(item.type, item.discount, item.price) }</div>
-                        <button type="submit" onClick={ () => this.selectItemForCart(item) }>Add to Cart</button>
+    getProductDetails() {
+        const discount = "col-sm-4 discount";
+        const discountNone = "discountNone";
+        const strikeAmt = "price col-sm-1 strike-text";
+        const oneColoum = "col-sm-1";
+        return <div>{ this.props.itemsList.length && this.props.itemsList.map((item) => {
+            return <div className="col-lg-3 box-new" key={item.id}>
+                <div
+                    className={ item.type === 'fiction' ? discount : discountNone }>{ item.type === 'fiction' ? this.getItemDiscount(item.discount) : null }</div>
+                <img src={item.img_url} alt={item.name} className="image"/>
+                <div className="inside-box">
+                    <h5 className="itemName">{ item.name }</h5>
+                    <div
+                        className={ item.type === 'fiction' ? strikeAmt : '' }>{ item.type === 'fiction' ? `$${item.price}` : '' }</div>
+                    <div className={ item.type === 'fiction' ? "price col-sm-2" : 'price col-sm-4' }>
+                        <strong>{ '$' + getItemPrice(item.type, item.discount, item.price) }</strong></div>
+                    <div className="col-sm-5">
+                        <button type="submit" className="btn-primary" onClick={ () => this.selectItemForCart(item) }>
+                            Add to Cart
+                        </button>
                     </div>
-                })}
+                </div>
+            </div>
+        })
+        }</div>
+    }
+
+    render() {
+        return (
+            <div className="body">
+                <h4 className="col-lg-2">All Items</h4>
+                <div className="col-lg-6"></div>
+                <button className="col-lg-2 btn-addCart" disabled={this.props.getCartCount > 0 ? false : true}
+                        onClick={this.goToCartPage}>Go To Cart
+                </button>
+                <div className="col-lg-11 line"></div>
+                <br/>
+                {this.getProductDetails()}
             </div>
         )
     }
