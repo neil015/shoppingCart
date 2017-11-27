@@ -2,14 +2,23 @@ import React from 'react';
 import '../../styles/home.scss';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {getItemPrice} from '../utils/itemsUtil';
+import {getItemPrice, getTotalItemCost, getTypeDiscount, getTotalDiscount, getNumberOfProductSelectedByCount} from '../utils/itemsUtil';
 import {selectedItemSuccess} from '../actions/itemActions';
 import {remove} from 'lodash';
 import {Link, browserHistory} from 'react-router';
 
 export const mapStateToProps = (state, props) => {
+    let numberOfItemInCart = 0;
+    if(state.selectedItems) {
+        numberOfItemInCart = getNumberOfProductSelectedByCount(state.selectedItems);
+    }
+    const totalItemsCost = getTotalItemCost(state.selectedItems);
+    const totalDiscount  = getTotalDiscount(state.selectedItems);
+    const typeDiscount  = getTypeDiscount(state.selectedItems);
     return {
-        selectedItemList: state.selectedItems
+        numberOfItemInCart,
+        selectedItemList: state.selectedItems,
+        totalItemsCost, totalDiscount, typeDiscount
     }
 };
 
@@ -24,6 +33,7 @@ class CheckoutPage extends React.Component {
     constructor(props) {
         super(props);
         this.manipulateItemCount = this.manipulateItemCount.bind(this);
+        this.getFinalPremium = this.getFinalPremium.bind(this);
     }
 
     manipulateItemCount(itemDetails, type) {
@@ -31,9 +41,9 @@ class CheckoutPage extends React.Component {
         const indexOfSelectedItem = this.props.selectedItemList.indexOf(itemDetails);
         if (type === 'minus') {
             modifiedItemList[indexOfSelectedItem].perItemCount -= 1;
-            if (modifiedItemList[indexOfSelectedItem].perItemCount < 0) {
+            if (modifiedItemList[indexOfSelectedItem].perItemCount <= 1) {
                 remove(modifiedItemList, item => {
-                    return item.perItemCount < 0;
+                    return item.perItemCount == 0;
                 });
             }
         }
@@ -51,13 +61,20 @@ class CheckoutPage extends React.Component {
         }
     }
 
+    getFinalPremium(totalPrice, discount, typeDiscount) {
+        return '$'+ (Number(totalPrice.split('$')[1]) - Number(discount.split('$')[1]) - Number(typeDiscount.split('$')[1]));
+    }
+
     render() {
+        const {
+            totalItemsCost,totalDiscount,typeDiscount,numberOfItemInCart
+        } = this.props;
         return (
             <div className="body">
                 <div className="col-lg-7 col-md-12 col-sm-12">
                     <div className="col-lg-12 col-md-12 col-sm-12 common-margin"> <Link to={"/"}>Order Summary</Link></div>
                     <hr className="col-lg-10 col-md-12 col-sm-12 common-margin"/>
-                    <div className="col-lg-6 col-md-12 col-sm-12 common-margin">Items(4)</div>
+                    <div className="col-lg-6 col-md-12 col-sm-12 common-margin">Items({numberOfItemInCart})</div>
                     <div className="col-lg-2 col-md-12 col-sm-12 common-margin">Qty</div>
                     <div className="col-lg-1 col-md-12 col-sm-12 common-margin price-Position">Price</div>
                     <hr className="col-lg-10 col-md-12 col-sm-12 common-margin"/>
@@ -85,12 +102,18 @@ class CheckoutPage extends React.Component {
                 <div className="col-lg-4 col-md-12 col-sm-12 box-new-cart">
                     <strong className="col-lg-12">Total</strong>
                     <br/><br/>
-                    <div className="col-lg-4">item(7)</div>
-                    <div className="col-lg-2">:</div>
-                    <div className="col-lg-2">$56</div>
+                    <div className="col-lg-4">item({numberOfItemInCart})</div>
+                    <div className="col-lg-1">:</div>
+                    <div className="col-lg-2">{ totalItemsCost }</div>
+                    <div className="col-lg-4"> Discount </div>
+                    <div className="col-lg-1"> : </div>
+                    <div className="col-lg-2">- {totalDiscount}</div>
+                    <div className="col-lg-4"> Type discount </div>
+                    <div className="col-lg-1"> : </div>
+                    <div className="col-lg-3">- {typeDiscount}</div>
                     <div className="inside-box-gray-border">
                         <strong className="col-lg-6">Order total</strong>
-                        <div className="col-lg-3">order</div>
+                        <div className="col-lg-3">{this.getFinalPremium( totalItemsCost, totalDiscount, typeDiscount )}</div>
                     </div>
                 </div>
             </div>

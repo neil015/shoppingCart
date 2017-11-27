@@ -10,16 +10,8 @@ import {loadItems} from './actions/itemActions';
 const store  = configureStore();
 store.dispatch(loadItems());
 
-console.log(store.getState());
-//store.dispatch(loadAuthors());
-
 ReactDOM.render(
     <Provider store = {store}>
         <Router history={browserHistory} routes={routes}/>
     </Provider>, document.getElementById('react-root')
 );
-
-/*
-ReactDOM.render(
-    <Router history={browserHistory} routes={routes}/>, document.getElementById('react-root')
-);*/

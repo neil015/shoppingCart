@@ -1,41 +1,11 @@
-React Boilerplate
-=====================
+Shopping cart very basic functionality covered.
 
-A minimal and light dev environment for ReactJS.
+Sorry for the time taken. 
 
-### Usage
+In the project folder start by using 
 
-Clone the boilerplate and create your own git repo.
+1.  npm install
+2.  npm install axios
 
-```
-git clone git@github.com:nolotz/react-simple-boilerplate.git
-```
-
-Install the dependencies and start the server.
-
-```
-npm/yarn install
-npm/yarn start
-open http://localhost:3000
-```
-
-### Static Files
-
-You can store static files like images, fonts, etc in the `build` folder.
-
-For example, if you copy a file called my_image.png into the build folder you can access it using `http://localhost:3000/build/my_image.png`.
-
-### Linting
-
-This boilerplate project includes React ESLint configuration.
-
-```
-npm run lint
-```
-
-### Dependencies
-
-* React
-* Webpack
-* [babel-loader](https://github.com/babel/babel-loader)
-* [webpack-dev-server](https://github.com/webpack/webpack-dev-server)
+3.  finally start by giving
+    npm start

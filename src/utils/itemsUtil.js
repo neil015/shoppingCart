@@ -32,3 +32,43 @@ export const getItemPrice = (type, discount, price) => {
         return price;
     }
 };
+
+export const getTotalItemCost = (allItems) => {
+    let totalSumOfAllItem = 0;
+    let cost;
+    if(allItems) {
+        allItems.map(item => {
+            cost = item.price * item.perItemCount;
+            totalSumOfAllItem += cost;
+        });
+    }
+    return totalSumOfAllItem !== 0 ?  '$' + totalSumOfAllItem : '$'+ 0;
+};
+
+export const getTotalDiscount  = (allItems) =>  {
+    let discount = 0;
+    let cost = 0;
+    if(allItems) {
+        allItems.map(item => {
+            if(item.discount){
+                cost = item.discount * item.perItemCount;
+                discount += cost;
+            }
+        });
+    }
+    return '$'+ discount;
+};
+
+export const getTypeDiscount = (allItems) => {
+    let typeDiscount = 0;
+    let cost = 0;
+    if(allItems) {
+        allItems.map(item => {
+            if(item.type === 'fiction'){
+                cost = item.price*15/100 * item.perItemCount;
+                typeDiscount += cost;
+            }
+        });
+    }
+    return '$'+ typeDiscount;
+};
